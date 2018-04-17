@@ -7,6 +7,55 @@ from branca.element import CssLink, Figure, JavascriptLink, MacroElement
 from jinja2 import Template
 
 
+class ScrollZoomToggler(MacroElement):
+    """Creates a button for enabling/disabling scroll on the Map."""
+    def __init__(self):
+        super(ScrollZoomToggler, self).__init__()
+        self._name = 'ScrollZoomTogglerv2'
+
+        self._template = Template("""
+            {% macro header(this,kwargs) %}
+                <style>
+                    #{{this.get_name()}} {
+                        position:absolute;
+                        width:35px;
+                        bottom:10px;
+                        height:35px;
+                        left:10px;
+                        background-color:#fff;
+                        text-align:center;
+                        line-height:35px;
+                        vertical-align: middle;
+                        }
+                </style>
+            {% endmacro %}
+
+            {% macro html(this,kwargs) %}
+				<img id="{{this.get_name()}}" alt="toggle scroll"
+					 src="https://cdn2.iconfinder.com/data/icons/e-commerce-4/256/Searching-256.png"
+					 style="z-index: 999999"
+					 onclick="{{this._parent.get_name()}}.toggleScroll()"
+					 title="Click to toggle scroll"/>
+            {% endmacro %}
+
+            {% macro script(this,kwargs) %}
+                    {{this._parent.get_name()}}.scrollEnabled = true;
+
+                    {{this._parent.get_name()}}.toggleScroll = function() {
+                        if (this.scrollEnabled) {
+                            this.scrollEnabled = false;
+                            this.scrollWheelZoom.disable();
+                            }
+                        else {
+                            this.scrollEnabled = true;
+                            this.scrollWheelZoom.enable();
+                            }
+                        };
+
+                    {{this._parent.get_name()}}.toggleScroll();
+            {% endmacro %}
+            """)
+			
 class Fullscreen(MacroElement):
     """
     Adds a fullscreen button to your map.
